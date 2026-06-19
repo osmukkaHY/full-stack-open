@@ -1,0 +1,23 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: GET <website address>
+    activate server
+    server->>browser: returns the webpage HTML
+    deactivate server
+
+    browser->>server: GET <script address>
+    activate server
+    server->>browser: returns the JavaScript-file used by the site
+    deactivate server
+
+    browser->>server: GET <stylesheet address>
+    activate server
+    server->>browser: returns the CSS-file
+    deactivate server
+
+    browser->>server: GET <data address>
+    activate server
+    server->>browser: returns the note data as JSON
+    deactivate server
