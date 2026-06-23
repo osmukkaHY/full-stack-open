@@ -1,27 +1,4 @@
-const Header = ({ name }) => {
-  return <h1>{name}</h1>
-}
-
-const Part = ({ part }) => {
-  return <p key={part.id}>{part.name} {part.exercises}</p>
-}
-
-const Footer = ({ parts }) => {
-  const exerciseCounts = parts.map(part => part.exercises)
-  return <p><b>total of {exerciseCounts.reduce(
-    (a, c) => a + c
-  )} exercises</b></p>
-}
-
-const Course = ({ course }) => {
-  return (
-    <>
-    <Header name={course.name} />
-    {course.parts.map(part => <Part part={part} />)}
-    <Footer parts={course.parts} />
-    </>
-  )
-}
+import Course from './components/Course.jsx'
 
 const App = () => {
   const courses = [
@@ -69,7 +46,7 @@ const App = () => {
     }
   ]
 
-  return courses.map(course => <Course course={course} />)
+  return courses.map(course => <Course key={course.id} course={course} />)
 }
 
 export default App
