@@ -14,6 +14,20 @@ const PersonList = ({ persons, filter }) =>{
   )
 }
 
+const ContactForm = (props) => {
+  return (
+      <form onSubmit={props.addPerson}>
+        <div>
+          name: <input onChange={props.handleNameChange} value={props.newName} /> <br />
+          number: <input onChange={props.handleNumberChange} value={props.newNumber} />
+        </div>
+        <div>
+          <button type="submit" >add</button>
+        </div>
+      </form>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [filter, setFilter] = useState('')
@@ -54,18 +68,14 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input onChange={handleNameChange} value={newName} /> <br />
-          number: <input onChange={handleNumberChange} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit" >add</button>
-        </div>
-      </form>
+      <ContactForm addPerson={addPerson}
+                    handleNameChange={handleNameChange}
+                    handleNumberChange={handleNumberChange}
+                    newName={newName}
+                    newNumber={newNumber} />
+
       <h2>Numbers</h2>
       filter: <input onChange={handleFilterChange} />
-
       <PersonList persons={persons} filter={filter} />
     </div>
   )
