@@ -22,6 +22,9 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
+    if(persons.map(person => person.name).includes(newName)) {
+      alert(`${newName} is already in phonebook`)
+    }
     const nameObject = {
       id: persons.length + 1,
       name: newName
@@ -36,7 +39,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={addName}>
         <div>
-          name: <input onChange={handleNameChange} />
+          name: <input onChange={handleNameChange} value={newName} />
         </div>
         <div>
           <button type="submit" >add</button>
