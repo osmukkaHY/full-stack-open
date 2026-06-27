@@ -23,6 +23,10 @@ const App = () => {
       id: String(notes.length + 1)
     }
 
+    axios
+      .post('http://localhost:3001/notes', noteObject)
+      .then(response => console.log(response))
+
     setNotes(notes.concat(noteObject))
     setNewNote('')
   }
