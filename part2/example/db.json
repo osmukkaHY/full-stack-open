@@ -19,6 +19,16 @@
       "content": "hello",
       "important": false,
       "id": "SUTYPTEO4ec"
+    },
+    {
+      "content": "a new note...",
+      "important": false,
+      "id": "oG2LNxZowcE"
+    },
+    {
+      "content": "a new note...",
+      "important": false,
+      "id": "IZ1JXrSECAc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
