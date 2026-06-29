@@ -53,18 +53,31 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const updatePerson = () => {
+    const changedPerson = { ...persons.find(person => person.name === newName), number: newNumber }
+    personService
+      .update(changedPerson.id, changedPerson)
+      .then(updatedPerson => {
+        setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
-
-    if(persons.map(person => person.name).includes(newName)) {
-      alert(`${newName} is already in phonebook`)
-      return
-    }
 
     const personObject = {
       id: persons.length + 1,
       name: newName,
       number: newNumber
+    }
+
+    if(persons.map(person => person.name).includes(newName)) {
+      if(confirm(`Do you want to update the number of ${newName}`)) {
+        updatePerson()
+      }
+      return
     }
 
     personService
