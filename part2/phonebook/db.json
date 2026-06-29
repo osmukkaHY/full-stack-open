@@ -24,6 +24,16 @@
       "id": "R1k77KvnyPs",
       "name": "Oskari Lappalainen",
       "number": "123 456 7890"
+    },
+    {
+      "id": "q3PFR3OtO6U",
+      "name": "hello",
+      "number": "12"
+    },
+    {
+      "id": "O8PeLWZKbIM",
+      "name": "h",
+      "number": "1"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
