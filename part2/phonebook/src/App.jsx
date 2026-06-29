@@ -1,5 +1,4 @@
 import Notification from './components/Notification.jsx'
-import Error from './components/Error.jsx'
 import personService from './services/persons.js'
 import { useState, useEffect } from 'react'
 
@@ -37,7 +36,6 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [notification, setNotification] = useState(null)
-  const [errorNotification, setErrorNotification] = useState(null)
 
   useEffect(() => {
     personService
@@ -64,13 +62,6 @@ const App = () => {
     }, 5000)
   }
 
-  const displayError= (message) => {
-    setErrorNotification(message)
-    setTimeout(() => {
-      setErrorNotification(null)
-    }, 5000)
-  }
-
   const updatePerson = () => {
     const changedPerson = { ...persons.find(person => person.name === newName), number: newNumber }
     personService
@@ -81,7 +72,6 @@ const App = () => {
         setNewNumber('')
         displayNotification(`Updated user ${updatedPerson.name}.`)
       })
-      .catch(error => displayError(`Failed updating entry for ${changedPerson.name}.`))
   }
 
   const addPerson = (event) => {
@@ -120,7 +110,6 @@ const App = () => {
 
   return (
     <div>
-      <Error message={errorNotification} />
       <Notification message={notification} />
       <h2>Phonebook</h2>
       <ContactForm addPerson={addPerson}
