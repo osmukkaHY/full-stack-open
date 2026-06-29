@@ -1,3 +1,4 @@
+import Notification from './components/Notification.jsx'
 import personService from './services/persons.js'
 import { useState, useEffect } from 'react'
 
@@ -34,6 +35,7 @@ const App = () => {
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     personService
@@ -53,6 +55,13 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const displayNotification = (message) => {
+    setNotification(message)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
+  }
+
   const updatePerson = () => {
     const changedPerson = { ...persons.find(person => person.name === newName), number: newNumber }
     personService
@@ -61,6 +70,7 @@ const App = () => {
         setPersons(persons.map(person => person.id === updatedPerson.id ? updatedPerson : person))
         setNewName('')
         setNewNumber('')
+        displayNotification(`Updated user ${updatedPerson.name}.`)
       })
   }
 
@@ -86,6 +96,7 @@ const App = () => {
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
+        displayNotification(`Created entry for ${newPerson.name}`)
       })
 
   }
@@ -99,6 +110,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification} />
       <h2>Phonebook</h2>
       <ContactForm addPerson={addPerson}
                     handleNameChange={handleNameChange}
