@@ -1,16 +1,16 @@
 import personService from './services/persons.js'
 import { useState, useEffect } from 'react'
 
-const Person = ({ person }) => <li>{person.name} <b>{person.number}</b></li>
+const Person = ({ person, deletePerson }) => <li>{person.name} <b>{person.number}</b> <button onClick={deletePerson}>delete</button></li>
 
-const PersonList = ({ persons, filter }) =>{
+const PersonList = ({ persons, filter, deletePerson }) =>{
   if(persons.length === 0)
     return <></>
   const filteredPersons = filter === '' ? persons : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
   return (
     <ul>
-      {filteredPersons.map(person => <Person key={person.name} person={person} />)}
+      {filteredPersons.map(person => <Person key={person.name} person={person} deletePerson={() => deletePerson(person)} />)}
     </ul>
   )
 }
@@ -77,6 +77,13 @@ const App = () => {
 
   }
 
+  const deletePerson = (deletedPerson) => {
+    if(confirm(`Do you really want to delete entry for ${deletedPerson.name}?`))
+      personService
+        .remove(deletedPerson.id)
+        .then(() => setPersons(persons.filter(person => person.id !== deletedPerson.id)))
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -88,7 +95,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       filter: <input onChange={handleFilterChange} />
-      <PersonList persons={persons} filter={filter} />
+      <PersonList persons={persons} filter={filter} deletePerson={deletePerson} />
     </div>
   )
 }
