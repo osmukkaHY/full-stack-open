@@ -36,7 +36,6 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-    console.log(req.params.id, persons)
     const person = persons.find(person => person.id === req.params.id);
     if(person) {
         res.json(person);
@@ -47,8 +46,23 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-    const newPerson = req.body;
-    newPerson.id = generateId();
+    const newName = req.body.name;
+    const newNumber = req.body.number;
+
+    if(!newName || !newNumber) {
+        res.status(400).send("Missing name or number");
+        return;
+    }
+    else if(persons.find(person => person.name === newName)) {
+        res.status(409).send("Name exists");
+        return;
+    }
+
+    const newPerson = {
+        id: generateId(),
+        name: newName,
+        number: newNumber
+    };
     persons = persons.concat(newPerson);
     res.json(newPerson);
 });
