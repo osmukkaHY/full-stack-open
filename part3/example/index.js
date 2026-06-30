@@ -1,7 +1,12 @@
 const express = require('express')
 const app = express()
 
+const unknownEndpoint = (request, response) =>{
+    response.status(404).send({ error: 'unknown endpoint' })
+}
+
 app.use(express.json())
+app.use(unknownEndpoint)
 
 let notes = [
   {
