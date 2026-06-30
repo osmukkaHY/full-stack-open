@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
     { 
       "id": "1",
@@ -24,11 +26,17 @@ let persons = [
     }
 ];
 
+function generateId() {
+    const MAX = 1_000_000_000;
+    return String(Math.floor(Math.random() * MAX));
+}
+
 app.get("/api/persons", (req, res) => {
     res.send(`<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`);
 });
 
 app.get("/api/persons/:id", (req, res) => {
+    console.log(req.params.id, persons)
     const person = persons.find(person => person.id === req.params.id);
     if(person) {
         res.json(person);
@@ -36,6 +44,13 @@ app.get("/api/persons/:id", (req, res) => {
     else {
         res.status(404).end();
     }
+});
+
+app.post("/api/persons", (req, res) => {
+    const newPerson = req.body;
+    newPerson.id = generateId();
+    persons = persons.concat(newPerson);
+    res.json(newPerson);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
