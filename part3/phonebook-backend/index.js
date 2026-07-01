@@ -1,8 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 
 morgan.token("postcontent", function(req, res) {return req.method === "POST" ? JSON.stringify(req.body) : "-"});
+app.use(cors())
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :postcontent"));
 app.use(express.json());
 
@@ -35,7 +37,7 @@ function generateId() {
 }
 
 app.get("/api/persons", (req, res) => {
-    res.send(`<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`);
+    res.json(persons);
 });
 
 app.get("/api/persons/:id", (req, res) => {
