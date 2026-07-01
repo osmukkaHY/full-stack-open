@@ -13,6 +13,7 @@ mongoose.set("strictQuery", false);
 
 
 const personSchema = {
+    id: String,
     name: String,
     number: String
 };

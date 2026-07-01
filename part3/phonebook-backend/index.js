@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const mongoose = require("mongoose");
 const app = express();
 
 morgan.token("postcontent", function(req, res) {return req.method === "POST" ? JSON.stringify(req.body) : "-"});
@@ -9,28 +10,22 @@ app.use(cors());
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :postcontent"));
 app.use(express.json());
 
-let persons = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-];
+
+const password = process.argv[2];
+console.log(password);
+const url = `mongodb+srv://osmukka:${password}@cluster0.j6trwin.mongodb.net/?appName=Cluster0`;
+
+mongoose.set("strictQuery", false);
+mongoose.connect(url, {family: 4});
+
+
+const personSchema = {
+    id: String,
+    name: String,
+    number: String
+};
+
+const Person = mongoose.model("Person", personSchema);
 
 function generateId() {
     const MAX = 1_000_000_000;
@@ -38,7 +33,7 @@ function generateId() {
 }
 
 app.get("/api/persons", (req, res) => {
-    res.json(persons);
+    Person.find({}).then(persons => res.json(persons));
 });
 
 app.get("/api/persons/:id", (req, res) => {
