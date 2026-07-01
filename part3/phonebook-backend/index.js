@@ -6,6 +6,13 @@ const mongoose = require("mongoose");
 const Person = require("./models/person")
 const app = express();
 
+const errorHandler = (error, req, res, next) => {
+    console.error(error.message);
+    if(error.name === "CastError") {
+        return res.status(400).send({error: "malformatted id"});
+    }
+}
+
 morgan.token("postcontent", function(req, res) {return req.method === "POST" ? JSON.stringify(req.body) : "-"});
 app.use(express.static("dist"));
 app.use(cors());
@@ -18,14 +25,18 @@ console.log(password);
 const url = `mongodb+srv://osmukka:${password}@cluster0.j6trwin.mongodb.net/?appName=Cluster0`;
 
 
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (req, res, next) => {
     Person.find({}).then(persons => res.json(persons));
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
     Person
         .findById(req.params.id)
-        .then(person => res.json(person));
+        .then(person => {
+            if(person) res.json(person);
+            else res.status(404).end();
+        })
+        .catch(error => next(error));
 });
 
 app.post("/api/persons", (req, res) => {
@@ -51,12 +62,19 @@ app.post("/api/persons", (req, res) => {
         });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
     Person
         .findByIdAndDelete(req.params.id)
         .then(result => res.status(204).end())
-        .catch(error => console.log(`Failed deleting item: ${error}`));
+        .catch(error => next(error));
 });
+
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({error: "unknown endpoint"})
+}
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
