@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const Person = require("./models/person")
 const app = express();
 
 morgan.token("postcontent", function(req, res) {return req.method === "POST" ? JSON.stringify(req.body) : "-"});
@@ -15,57 +17,38 @@ const password = process.argv[2];
 console.log(password);
 const url = `mongodb+srv://osmukka:${password}@cluster0.j6trwin.mongodb.net/?appName=Cluster0`;
 
-mongoose.set("strictQuery", false);
-mongoose.connect(url, {family: 4});
-
-
-const personSchema = {
-    id: String,
-    name: String,
-    number: String
-};
-
-const Person = mongoose.model("Person", personSchema);
-
-function generateId() {
-    const MAX = 1_000_000_000;
-    return String(Math.floor(Math.random() * MAX));
-}
 
 app.get("/api/persons", (req, res) => {
     Person.find({}).then(persons => res.json(persons));
 });
 
 app.get("/api/persons/:id", (req, res) => {
-    const person = persons.find(person => person.id === req.params.id);
-    if(person) {
-        res.json(person);
-    }
-    else {
-        res.status(404).end();
-    }
+    Person
+        .findById(req.params.id)
+        .then(person => res.json(person));
 });
 
 app.post("/api/persons", (req, res) => {
-    const newName = req.body.name;
-    const newNumber = req.body.number;
-
-    if(!newName || !newNumber) {
-        res.status(400).send("Missing name or number");
-        return;
-    }
-    else if(persons.find(person => person.name === newName)) {
-        res.status(409).send("Name exists");
-        return;
+    console.log(req.body);
+    const body = req.body;
+    if(!body.name) {
+        return res.status(400).json({error: "Missing name"});
     }
 
-    const newPerson = {
-        id: generateId(),
+    const newName = body.name;
+    const newNumber = body.number;
+
+    const newPerson = new Person({
         name: newName,
         number: newNumber
-    };
-    persons = persons.concat(newPerson);
-    res.json(newPerson);
+    });
+
+    newPerson
+        .save()
+        .then(result => {
+            console.log(`Saved person ${result.name}:${result.number}`);
+            res.json(newPerson);
+        });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -75,7 +58,7 @@ app.delete("/api/persons/:id", (req, res) => {
     res.status(204).end();
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}.`)
 });
