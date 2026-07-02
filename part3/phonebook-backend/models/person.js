@@ -11,8 +11,10 @@ mongoose
     .catch(error => console.log("Couldn't connect to DB:", error.message));
 
 const personSchema = new mongoose.Schema({
-    id: String,
-    name: String,
+    name: {
+        type: String,
+        minLength: 3,
+    },
     number: String
 });
 

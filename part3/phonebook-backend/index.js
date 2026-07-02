@@ -11,6 +11,9 @@ const errorHandler = (error, req, res, next) => {
     if(error.name === "CastError") {
         return res.status(400).send({error: "malformatted id"});
     }
+    if(error.name === "ValidationError") {
+        return res.status(400).json({error: error.message});
+    }
 }
 
 morgan.token("postcontent", function(req, res) {return req.method === "POST" ? JSON.stringify(req.body) : "-"});
@@ -39,12 +42,8 @@ app.get("/api/persons/:id", (req, res, next) => {
         .catch(error => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
-    console.log(req.body);
+app.post("/api/persons", (req, res, next) => {
     const body = req.body;
-    if(!body.name) {
-        return res.status(400).json({error: "Missing name"});
-    }
 
     const newName = body.name;
     const newNumber = body.number;
@@ -59,7 +58,8 @@ app.post("/api/persons", (req, res) => {
         .then(result => {
             console.log(`Saved person ${result.name}:${result.number}`);
             res.json(newPerson);
-        });
+        })
+        .catch(error => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {

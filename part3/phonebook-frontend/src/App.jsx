@@ -109,6 +109,7 @@ const App = () => {
         setNewNumber('')
         displayNotification(`Created entry for ${newPerson.name}`)
       })
+      .catch(error => displayError(error.response.data.error));
 
   }
 
