@@ -73,6 +73,20 @@ const unknownEndpoint = (req, res) => {
     res.status(404).send({error: "unknown endpoint"})
 }
 
+app.put("/api/persons/:id", (req, res, next) => {
+    Person
+        .findById(req.params.id)
+        .then(person => {
+            if(!person) return res.status(404).end();
+            person.number = req.body.number;
+
+            return person.save().then(updatedPerson => {
+                res.json(updatedPerson);
+            })
+        })
+        .catch(error => next(error));
+})
+
 app.use(unknownEndpoint);
 app.use(errorHandler);
 
