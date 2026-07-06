@@ -94,6 +94,13 @@ test("likes are set to 0 if not explicitly passed", async () => {
 
 })
 
+test("post is rejected if title or url is not set", async () => {
+    await api
+        .post("/api/blogs")
+        .send({author: "me"})
+        .expect(400);
+})
+
 after(async () => {
     mongoose.connection.close();
 });

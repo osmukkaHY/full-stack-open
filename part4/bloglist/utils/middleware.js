@@ -6,7 +6,7 @@ function requestLogger(req, res, next) {
 }
 
 function unknownEndpoint(req, res) {
-    response.status(404).send({error: "Unknown endpoint"});
+    res.status(404).send({error: "Unknown endpoint"});
 }
 
 function errorHandler(err, req, res, next) {
@@ -14,9 +14,9 @@ function errorHandler(err, req, res, next) {
 
     switch(err.name) {
         case "CastError":
-            return response.status(400).send({error: "Malformatted id"});
+            return res.status(400).send({error: "Malformatted id"});
         case "ValidationError":
-            return response.status(400).send({error: err.message});
+            return res.status(400).send({error: err.message});
     };
     next(err);
 }
