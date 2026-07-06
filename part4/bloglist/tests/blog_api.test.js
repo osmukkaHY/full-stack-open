@@ -85,6 +85,15 @@ test("post request creates a new blog", async () => {
     assert.strictEqual(res.body.length, initialBlogs.length + 1);
 })
 
+test("likes are set to 0 if not explicitly passed", async () => {
+    await api
+        .post("/api/blogs")
+        .send({title: "Additional", author: "me", url: "rickroll"});
+    const res = await api.get("/api/blogs");
+    assert.strictEqual(res.body[6].likes, 0);
+
+})
+
 after(async () => {
     mongoose.connection.close();
 });
