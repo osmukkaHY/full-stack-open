@@ -71,6 +71,12 @@ test("get request returns correct amount of blogs", async () => {
     assert.strictEqual(res.body.length, initialBlogs.length);
 });
 
+test("id is set correctly", async () => {
+    const res = await api.get("/api/blogs");
+    assert.strictEqual(res.body[0].id, initialBlogs[0]._id);
+    assert.strictEqual(res.body[0]._id, undefined);
+})
+
 after(async () => {
     mongoose.connection.close();
 });
