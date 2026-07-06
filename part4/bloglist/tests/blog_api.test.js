@@ -77,6 +77,14 @@ test("id is set correctly", async () => {
     assert.strictEqual(res.body[0]._id, undefined);
 })
 
+test("post request creates a new blog", async () => {
+    await api
+        .post("/api/blogs")
+        .send({title: "Additional", author: "me", url: "rickroll", likes: 0});
+    const res = await api.get("/api/blogs");
+    assert.strictEqual(res.body.length, initialBlogs.length + 1);
+})
+
 after(async () => {
     mongoose.connection.close();
 });
