@@ -59,6 +59,16 @@ test("post is deleted correctly", async () => {
     assert.strictEqual(blogs.length, initialBlogs.length - 1);
 })
 
+test("post likes are updated properly", async () => {
+    await api
+        .put(`/api/blogs/${initialBlogs[0]._id.toString()}`)
+        .send({likes: 69})
+        .expect(200);
+
+    const blogs = await storedBlogs();
+    assert.strictEqual(blogs[0].likes, 69);
+})
+
 after(async () => {
     mongoose.connection.close();
 });
