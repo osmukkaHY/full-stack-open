@@ -21,6 +21,8 @@ function errorHandler(err, req, res, next) {
             if(err.message.includes("E11000 duplicate key error")) {
                 return res.status(400).json({error: "Username has to be unique"});
             }
+        case "JsonWebTokenError":
+            return res.status(401).json({error: "token invalid"});
     };
     next(err);
 }
