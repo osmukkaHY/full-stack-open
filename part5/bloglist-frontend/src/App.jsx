@@ -12,8 +12,16 @@ const App = () => {
   useEffect(() => {
     blogService
       .getAll().
-      then(blogs => setBlogs(blogs))  
+      then(blogs => setBlogs(blogs))
   }, []);
+
+  useEffect(() => {
+    const userJSON = window.localStorage.getItem("user");
+    if(userJSON) {
+      const user = JSON.parse(userJSON);
+      setUser(user);
+    }
+  }, [])
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -23,7 +31,7 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
-      console.log(blogs);
+      window.localStorage.setItem("user", JSON.stringify(user));
     }
     catch {
       console.log("incorrect credentials");
@@ -33,6 +41,13 @@ const App = () => {
       //}, 5000);
     }
   };
+
+  const handleLogout = async e => {
+    e.preventDefault();
+
+    setUser(null);
+    window.localStorage.setItem("user", null);
+  }
 
   const loginForm = () => (
     <>
@@ -64,7 +79,7 @@ const App = () => {
   );
 
   const greeting = () => (
-    <p>Hello, {user.name}</p>
+    <p>Hello, {user.name}<button type="button" onClick={handleLogout}>Log Out</button></p>
   )
 
   const blogsList = () => (
