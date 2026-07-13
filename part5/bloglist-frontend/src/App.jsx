@@ -8,6 +8,9 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [newBlogName, setNewBlogName] = useState("");
+  const [newBlogAuthor, setNewBlogAuthor] = useState("");
+  const [newBlogUrl, setNewBlogUrl] = useState("");
 
   useEffect(() => {
     blogService
@@ -28,6 +31,7 @@ const App = () => {
 
     try {
       const user = await loginService.login({username, password});
+      blogService.setToken(user.token)
       setUser(user);
       setUsername("");
       setPassword("");
@@ -42,7 +46,17 @@ const App = () => {
     }
   };
 
-  const handleLogout = async e => {
+  const handleNewBlog = async e => {
+    e.preventDefault();
+
+    await blogService.addBlog({
+      title: newBlogName,
+      author: newBlogAuthor,
+      url: newBlogUrl
+    });
+  };
+
+  const handleLogout = e => {
     e.preventDefault();
 
     setUser(null);
@@ -81,6 +95,39 @@ const App = () => {
   const greeting = () => (
     <p>Hello, {user.name}<button type="button" onClick={handleLogout}>Log Out</button></p>
   )
+  
+  const newBlogForm = () => (
+    <div>
+    <h2>Create New</h2>
+    <form onSubmit={handleNewBlog}>
+      <label>
+        Name: 
+        <input
+          type="text"
+          value={newBlogName}
+          onChange={({target}) => setNewBlogName(target.value)}
+        />
+      </label> <br/>
+      <label>
+        Author: 
+        <input
+          type="text"
+          value={newBlogAuthor}
+          onChange={({target}) => setNewBlogAuthor(target.value)}
+        />
+      </label> <br/>
+      <label>
+        Url: 
+        <input
+          type="text"
+          value={newBlogUrl}
+          onChange={({target}) => setNewBlogUrl(target.value)}
+        />
+      </label> <br/>
+      <button type="submit">submit</button>
+    </form>
+    </div>
+  )
 
   const blogsList = () => (
     <>
@@ -96,6 +143,7 @@ const App = () => {
       <h2>blogs</h2>
       {!user && loginForm()}
       {user && greeting()}
+      {user && newBlogForm()}
       {user && blogsList()}
     </div>
   )
