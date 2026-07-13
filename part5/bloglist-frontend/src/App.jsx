@@ -8,6 +8,7 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [newBlogName, setNewBlogName] = useState("");
   const [newBlogAuthor, setNewBlogAuthor] = useState("");
   const [newBlogUrl, setNewBlogUrl] = useState("");
@@ -26,6 +27,11 @@ const App = () => {
     }
   }, [])
 
+  const notifyUser = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 5000);
+  }
+
   const handleLogin = async e => {
     e.preventDefault();
 
@@ -36,9 +42,11 @@ const App = () => {
       setUsername("");
       setPassword("");
       window.localStorage.setItem("user", JSON.stringify(user));
+      notifyUser(`Logged in as ${user.username}`);
     }
     catch {
       console.log("incorrect credentials");
+      notifyUser("Incorrect credentials");
       //setErrorMessage("wrong credentials");
       //setTimeout(() => {
       //  setErrorMessage(null);
@@ -48,12 +56,17 @@ const App = () => {
 
   const handleNewBlog = async e => {
     e.preventDefault();
-
-    await blogService.addBlog({
-      title: newBlogName,
-      author: newBlogAuthor,
-      url: newBlogUrl
-    });
+    try {
+      const newBlog = await blogService.addBlog({
+        title: newBlogName,
+        author: newBlogAuthor,
+        url: newBlogUrl
+      });
+      notifyUser("Added a new blog.");
+    }
+    catch {
+      notifyUser("Couldn't add blog");
+    }
   };
 
   const handleLogout = e => {
@@ -61,7 +74,12 @@ const App = () => {
 
     setUser(null);
     window.localStorage.setItem("user", null);
+    notifyUser("Logged out");
   }
+
+  const notificationBanner = () => (
+    <p>{notification}</p>
+  )
 
   const loginForm = () => (
     <>
@@ -140,6 +158,7 @@ const App = () => {
 
   return (
     <div>
+      {notification && notificationBanner()}
       <h2>blogs</h2>
       {!user && loginForm()}
       {user && greeting()}
